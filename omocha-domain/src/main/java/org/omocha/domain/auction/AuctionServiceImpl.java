@@ -75,7 +75,7 @@ public class AuctionServiceImpl implements AuctionService {
 
 		Category category = categoryReader.getCategory(addCommand.categoryId());
 		Auction auction = auctionStore.store(addCommand.toEntity(category));
-		auctionImagesFactory.store(auction, addCommand);
+		// auctionImagesFactory.store(auction, addCommand);
 
 		return AuctionInfo.AddAuction.toInfo(auction);
 	}

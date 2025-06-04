@@ -28,10 +28,10 @@ public class AuctionStoreImpl implements AuctionStore {
 	@Override
 	public void removeAuction(Auction auction) {
 		auctionRepository.delete(auction);
-		imageProvider.deleteFile(auction.getThumbnailPath());
-		List<Image> images = auction.getImages();
-		for (Image image : images) {
-			imageProvider.deleteFile(image.getImagePath());
-		}
+		// imageProvider.deleteFile(auction.getThumbnailPath());
+		// List<Image> images = auction.getImages();
+		// for (Image image : images) {
+		// 	imageProvider.deleteFile(image.getImagePath());
+		// }
 	}
 }

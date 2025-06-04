@@ -4,10 +4,10 @@ FROM pg_indexes
 WHERE tablename = 'auction';
 
 -- auction table index 추가
-CREATE INDEX index_auction_endDate_status ON auction (end_date);
+CREATE INDEX index_auction_endDate ON auction (end_date);
 
 -- auction table index 삭제
-DROP INDEX index_auction_endDate_status;
+DROP INDEX index_auction_endDate;
 
 -- auction table 조회 속도 측정용 query
 SELECT *

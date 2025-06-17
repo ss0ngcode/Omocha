@@ -163,10 +163,6 @@ public class Auction extends BaseEntity {
 		this.auctionStatus = AuctionStatus.CONCLUDED;
 	}
 
-	public void statusNoBids() {
-		this.auctionStatus = AuctionStatus.NO_BIDS;
-	}
-
 	public void validateAuctionStatusConcludedOrCompleted() {
 		if (!(auctionStatus.equals(AuctionStatus.CONCLUDED) || auctionStatus.equals(AuctionStatus.COMPLETED))) {
 			throw new AuctionNotConcludedException(auctionId, auctionStatus);

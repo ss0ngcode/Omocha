@@ -1,7 +1,5 @@
 package org.omocha.domain.notification;
 
-import java.util.List;
-
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 public interface NotificationService {
@@ -11,7 +9,9 @@ public interface NotificationService {
 
 	void sendInstantBuyEvent(Long auctionId, Long buyerMemberId);
 
-	void sendConcludeEvent(List<Long> concludedAuctionIdList);
+	void sendConcludeEvent(Long concludedAuctionId);
+
+	void sendNoBidEvent(Long noBidAuctionId);
 
 	void read(NotificationCommand.Read readCommand);
 

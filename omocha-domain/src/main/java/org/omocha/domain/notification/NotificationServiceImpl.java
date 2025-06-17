@@ -4,7 +4,6 @@ import static org.omocha.domain.notification.enums.EventName.*;
 import static org.omocha.domain.notification.enums.NotificationCode.*;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.omocha.domain.auction.Auction;
 import org.omocha.domain.auction.AuctionReader;
@@ -123,19 +122,21 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Override
 	@Transactional
-	public void sendConcludeEvent(List<Long> concludedAuctionIdList) {
-		concludedAuctionIdList.forEach(auctionId -> {
-			Auction auction = auctionReader.getAuction(auctionId);
-			String auctionData = convertAuctionToJson(auction);
+	public void sendConcludeEvent(Long concludedAuctionId) {
+		Auction auction = auctionReader.getAuction(concludedAuctionId);
+		String auctionData = convertAuctionToJson(auction);
 
-			if (auction.getConclude() == null) {
-				notifyMember(CONCLUDE, auction.getMemberId(), CONCLUDE_NO_BIDS, auctionData);
-				return;
-			}
+		notifyMember(CONCLUDE, auction.getMemberId(), CONCLUDE_SELLER, auctionData);
+		notifyConcludeBuyers(concludedAuctionId, auction.getConclude().getBuyer().getMemberId(), auctionData);
+	}
 
-			notifyMember(CONCLUDE, auction.getMemberId(), CONCLUDE_SELLER, auctionData);
-			notifyConcludeBuyers(auctionId, auction.getConclude().getBuyer().getMemberId(), auctionData);
-		});
+	@Override
+	@Transactional
+	public void sendNoBidEvent(Long noBidAuctionId) {
+		Auction auction = auctionReader.getAuction(noBidAuctionId);
+		String auctionData = convertAuctionToJson(auction);
+
+		notifyMember(CONCLUDE, auction.getMemberId(), CONCLUDE_NO_BIDS, auctionData);
 	}
 
 	private void notifyConcludeBuyers(

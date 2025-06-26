@@ -3,8 +3,6 @@ package org.omocha.domain.notification;
 import static org.omocha.domain.notification.enums.EventName.*;
 import static org.omocha.domain.notification.enums.NotificationCode.*;
 
-import java.io.IOException;
-
 import org.omocha.domain.auction.Auction;
 import org.omocha.domain.auction.AuctionReader;
 import org.omocha.domain.bid.BidReader;
@@ -12,7 +10,6 @@ import org.omocha.domain.common.util.JsonUtils;
 import org.omocha.domain.notification.enums.EventName;
 import org.omocha.domain.notification.enums.NotificationCode;
 import org.omocha.domain.notification.exception.NotificationAccessException;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -29,9 +26,9 @@ public class NotificationServiceImpl implements NotificationService {
 	private final NotificationReader notificationReader;
 	private final AuctionReader auctionReader;
 	private final BidReader bidReader;
+	private final NotificationSender notificationSender;
 
 	private static final long SSE_TIMEOUT = 1000L * 60 * 5;
-	private static final long RECONNECTION_TIMEOUT = 1000L;
 
 	@Override
 	@Transactional
@@ -40,7 +37,7 @@ public class NotificationServiceImpl implements NotificationService {
 		String eventId = createEmitterId(memberId);
 
 		SseEmitter emitter = createEmitter(memberId, eventId);
-		sendSseEvent(emitter, eventId, CONNECT, memberId, "Connect Success");
+		notificationSender.sendSseEvent(emitter, eventId, CONNECT, memberId, "Connect Success");
 
 		String lastEventId = connectCommand.lastEventId();
 		if (!lastEventId.isEmpty()) {
@@ -87,7 +84,7 @@ public class NotificationServiceImpl implements NotificationService {
 			NotificationInfo.RootResponse.toInfo(notification, NotificationInfo.AuctionResponse.class)
 		);
 
-		sendSseEvent(emitter, eventId, notification.getEventName(), memberId, notificationData);
+		notificationSender.sendSseEvent(emitter, eventId, notification.getEventName(), memberId, notificationData);
 	}
 
 	@Override
@@ -164,27 +161,7 @@ public class NotificationServiceImpl implements NotificationService {
 		);
 
 		notificationReader.getEmitterList(memberId).forEach(emitter ->
-			sendSseEvent(emitter, eventId, eventName, memberId, notificationData));
-	}
-
-	private void sendSseEvent(
-		SseEmitter emitter,
-		String eventId,
-		EventName eventName,
-		Long memberId,
-		String data
-	) {
-		try {
-			if (emitter != null) {
-				emitter.send(SseEmitter.event()
-					.name(eventName.toString())
-					.id(eventId)
-					.data(data, MediaType.APPLICATION_JSON)
-					.reconnectTime(RECONNECTION_TIMEOUT));
-			}
-		} catch (IOException e) {
-			notificationStore.emitterDelete(memberId, eventId);
-		}
+			notificationSender.sendSseEvent(emitter, eventId, eventName, memberId, notificationData));
 	}
 
 	private String createEmitterId(Long memberId) {

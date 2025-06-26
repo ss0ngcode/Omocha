@@ -47,6 +47,7 @@ public class BidServiceImpl implements BidService {
 	}
 
 	@Override
+	@Transactional
 	@DistributedLock(key = "#addBid.auctionId()")
 	public BidInfo.AddBid addBid(BidCommand.AddBid addBid) {
 

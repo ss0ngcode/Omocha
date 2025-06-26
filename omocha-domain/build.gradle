@@ -8,6 +8,12 @@ dependencies {
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // Spring Retry
+    implementation 'org.springframework.retry:spring-retry:2.0.12'
+
+    // 테스트용 PostgreSQL 의존성 추가
+    testRuntimeOnly 'org.postgresql:postgresql'
 }
 
 // querydsl 적용

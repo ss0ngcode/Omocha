@@ -8,7 +8,7 @@ HELP.md
 omocha.iml
 
 omocha-api/src/main/resources/logback-spring-test.yml
-application-test.yml
+**/src/test/resources/application.yml
 
 ### STS ###
 .apt_generated

@@ -9,7 +9,9 @@ import org.omocha.domain.notification.NotificationService;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ConcludeFacade {
@@ -22,16 +24,20 @@ public class ConcludeFacade {
 		List<Long> expiredAuctionIds = expiredAuctionFetcher.fetchExpiredAuctionIds();
 
 		for (Long expiredAuctionId : expiredAuctionIds) {
-			ConcludeInfo.ConcludeResult concludeResult = concludeProcessor.processConclusion(expiredAuctionId);
-
-			if (!concludeResult.isConcluded()) {
-				// 입찰이 없어서 낙찰이 되지 않은 경우
-				notificationService.sendNoBidEvent(concludeResult.auctionId());
-				return;
-			}
-
-			// 입찰이 있어서 낙찰이 된 경우
-			notificationService.sendConcludeEvent(concludeResult.auctionId());
+			processSingleAuctionWithRetry(expiredAuctionId);
 		}
+	}
+
+	private void processSingleAuctionWithRetry(Long expiredAuctionId) {
+		ConcludeInfo.ConcludeResult concludeResult = concludeProcessor.processConclusion(expiredAuctionId);
+
+		if (!concludeResult.isConcluded()) {
+			// 입찰이 없어서 낙찰이 되지 않은 경우
+			notificationService.sendNoBidEvent(concludeResult.auctionId());
+			return;
+		}
+
+		// 입찰이 있어서 낙찰이 된 경우
+		notificationService.sendConcludeEvent(concludeResult.auctionId());
 	}
 }

@@ -33,7 +33,7 @@ public class Conclude {
 	private Long concludeId;
 
 	@OneToOne
-	@JoinColumn(name = "auction_id")
+	@JoinColumn(name = "auction_id", unique = true)
 	private Auction auction;
 
 	@ManyToOne(fetch = FetchType.LAZY)

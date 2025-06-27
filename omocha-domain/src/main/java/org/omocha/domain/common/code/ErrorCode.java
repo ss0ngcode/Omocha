@@ -106,6 +106,7 @@ public enum ErrorCode {
 	// Notification Code
 	NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "알림을 찾을 수 없습니다."),
 	NOTIFICATION_ACCESS(HttpStatus.FORBIDDEN, "알림에 접근하려는 사용자가 알림 소유자와 일치하지 않습니다."),
+	NOTIFICATION_SEND(HttpStatus.SERVICE_UNAVAILABLE, "SSE 이벤트 전송에 실패했습니다."),
 
 	// Common Code
 	UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증 정보가 올바르지 않습니다. 재로그인 후 다시 시도해주세요."),

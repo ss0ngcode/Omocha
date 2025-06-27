@@ -3,6 +3,7 @@ package org.omocha.domain.notification;
 import java.io.IOException;
 
 import org.omocha.domain.notification.enums.EventName;
+import org.omocha.domain.notification.exception.NotificationSendException;
 import org.springframework.http.MediaType;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
@@ -31,8 +32,7 @@ public class NotificationSenderImpl implements NotificationSender {
 		try {
 			retryExecutor.sendWithRetry(emitter, eventId, eventName, memberId, data);
 		} catch (IOException e) {
-			// TODO: 자체 Exception으로 처리하기
-			throw new RuntimeException("SSE 이벤트 전송에 실패했습니다. memberId: " + memberId, e);
+			throw new NotificationSendException(memberId);
 		}
 	}
 

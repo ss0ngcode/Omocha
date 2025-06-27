@@ -3,16 +3,13 @@ package org.omocha.domain.member.exception;
 import org.omocha.domain.common.code.ErrorCode;
 import org.omocha.domain.common.exception.OmochaException;
 
-import lombok.Getter;
-
-@Getter
-public class MemberException extends OmochaException {
-	private final ErrorCode errorCode;
-	private final String message;
+public abstract class MemberException extends OmochaException {
 
 	public MemberException(ErrorCode errorCode, String message) {
 		super(errorCode, message);
-		this.errorCode = errorCode;
-		this.message = message;
+	}
+
+	public MemberException(ErrorCode errorCode, String message, Exception cause) {
+		super(errorCode, message, cause);
 	}
 }

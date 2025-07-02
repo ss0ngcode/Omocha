@@ -1,24 +1,24 @@
-package org.omocha.domain.util;
+package org.omocha.util;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Table;
 
-@Component
 public class DatabaseCleaner implements InitializingBean {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+	private final EntityManager entityManager;
 
 	private List<String> tableNames;
+
+	public DatabaseCleaner(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
 
 	@Override
 	public void afterPropertiesSet() {

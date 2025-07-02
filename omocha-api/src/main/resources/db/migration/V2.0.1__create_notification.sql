@@ -1,4 +1,4 @@
-CREATE TABLE notification
+CREATE TABLE IF NOT EXISTS notification
 (
     notification_id   BIGSERIAL PRIMARY KEY,
     member_id         BIGINT,

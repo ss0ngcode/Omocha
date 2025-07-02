@@ -1,5 +1,11 @@
-dependencies {
+// 1. plugins 블록을 파일의 가장 위로 옮깁니다.
+plugins {
+    id 'java'
+    id 'java-test-fixtures' // 공유하려는 모듈에 추가
+}
 
+// 2. 그 아래에 나머지 설정들을 순서대로 배치합니다.
+dependencies {
     // JPA
     api 'org.springframework.boot:spring-boot-starter-data-jpa'
 

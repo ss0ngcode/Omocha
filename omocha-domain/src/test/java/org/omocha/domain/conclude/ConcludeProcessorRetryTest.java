@@ -18,7 +18,7 @@ import org.omocha.domain.auction.vo.Price;
 import org.omocha.domain.bid.Bid;
 import org.omocha.domain.bid.BidReader;
 import org.omocha.domain.member.Member;
-import org.omocha.domain.util.DatabaseCleaner;
+import org.omocha.util.DatabaseCleaner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -29,11 +29,13 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class ConcludeProcessorTest {
+@ActiveProfiles("test")
+public class ConcludeProcessorRetryTest {
 
 	@SpringBootApplication                                // 테스트용 스프링 부트 애플리케이션 설정
 	@EnableRetry

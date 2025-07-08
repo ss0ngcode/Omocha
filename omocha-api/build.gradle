@@ -58,4 +58,5 @@ tasks.named("bootJar") {
 
 tasks.named('test') {
     useJUnitPlatform()
+    jvmArgs '-Xmx4g' // 테스트 실행 시 최대 힙 메모리를 4GB로 설정
 }

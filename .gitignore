@@ -1,14 +1,16 @@
 *.env
 .gradle
 build/
-data/logs
-docker-postgres
+/data/logs
+/data/redis
+/docker-postgres
+
 omocha-domain/src/main/generated
 HELP.md
 omocha.iml
 
-omocha-api/src/main/resources/logback-spring-test.yml
-**/src/test/resources/application.yml
+*/src/main/resources/logback-spring-test.yml
+*/src/test/resources/application-test.yml
 
 ### STS ###
 .apt_generated

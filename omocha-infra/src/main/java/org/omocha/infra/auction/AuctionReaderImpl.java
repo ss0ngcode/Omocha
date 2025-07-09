@@ -39,11 +39,11 @@ public class AuctionReaderImpl implements AuctionReader {
 	}
 
 	@Override
-	public List<Auction> getExpiredBiddingAuctionList() {
+	public List<Long> getExpiredBiddingAuctionList() {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime oneHourBefore = now.minusHours(1);
 
-		return auctionRepository.findAllByAuctionStatusAndEndDateBetween(
+		return auctionRepository.findAuctionIdsByStatusAndEndDateBetween(
 			Auction.AuctionStatus.BIDDING,
 			oneHourBefore,
 			now

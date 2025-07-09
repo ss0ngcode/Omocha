@@ -14,7 +14,7 @@ public interface AuctionReader {
 
 	Auction getAuction(Long auctionId);
 
-	List<Auction> getExpiredBiddingAuctionList();
+	List<Long> getExpiredBiddingAuctionList();
 
 	Page<AuctionInfo.RetrieveMyAuctions> getMyAuctionList(
 		AuctionCommand.RetrieveMyAuctions retrieveMyAuctions,

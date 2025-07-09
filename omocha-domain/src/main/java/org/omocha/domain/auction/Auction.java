@@ -25,6 +25,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -35,13 +36,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "auction")
+@Table(name = "auction",
+	indexes = {
+		@Index(
+			name = "idx_auction_auctionStatus_endDate_auctionID",
+			columnList = "endDate, auctionStatus, auctionId"
+		)
+	}
+)
 public class Auction extends BaseEntity {
 
 	@Id

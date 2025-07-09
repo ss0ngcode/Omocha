@@ -9,7 +9,7 @@ public abstract class AuctionException extends OmochaException {
 		super(errorCode, message);
 	}
 
-	public AuctionException(ErrorCode errorCode, String message, Exception cause) {
+	public AuctionException(ErrorCode errorCode, String message, Throwable cause) {
 		super(errorCode, message, cause);
 	}
 }

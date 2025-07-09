@@ -9,7 +9,7 @@ public abstract class MemberException extends OmochaException {
 		super(errorCode, message);
 	}
 
-	public MemberException(ErrorCode errorCode, String message, Exception cause) {
+	public MemberException(ErrorCode errorCode, String message, Throwable cause) {
 		super(errorCode, message, cause);
 	}
 }

@@ -9,7 +9,7 @@ public abstract class ChatException extends OmochaException {
 		super(errorCode, message);
 	}
 
-	public ChatException(ErrorCode errorCode, String message, Exception cause) {
+	public ChatException(ErrorCode errorCode, String message, Throwable cause) {
 		super(errorCode, message, cause);
 	}
 }

@@ -9,7 +9,7 @@ public abstract class QnaException extends OmochaException {
 		super(errorCode, message);
 	}
 
-	public QnaException(ErrorCode errorCode, String message, Exception cause) {
+	public QnaException(ErrorCode errorCode, String message, Throwable cause) {
 		super(errorCode, message, cause);
 	}
 }

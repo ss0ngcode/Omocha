@@ -13,7 +13,7 @@ public abstract class OmochaException extends RuntimeException {
 		this.errorCode = errorCode;
 	}
 
-	public OmochaException(ErrorCode errorCode, String message, Exception cause) {
+	public OmochaException(ErrorCode errorCode, String message, Throwable cause) {
 		super(message, cause);
 		this.errorCode = errorCode;
 	}

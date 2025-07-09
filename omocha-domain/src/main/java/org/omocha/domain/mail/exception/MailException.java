@@ -9,7 +9,7 @@ public abstract class MailException extends OmochaException {
 		super(errorCode, message);
 	}
 
-	public MailException(ErrorCode errorCode, String message, Exception cause) {
+	public MailException(ErrorCode errorCode, String message, Throwable cause) {
 		super(errorCode, message, cause);
 	}
 }

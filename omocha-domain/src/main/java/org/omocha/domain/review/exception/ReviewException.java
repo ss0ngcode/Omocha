@@ -9,7 +9,7 @@ public abstract class ReviewException extends OmochaException {
 		super(errorCode, message);
 	}
 
-	public ReviewException(ErrorCode errorCode, String message, Exception cause) {
+	public ReviewException(ErrorCode errorCode, String message, Throwable cause) {
 		super(errorCode, message, cause);
 	}
 }

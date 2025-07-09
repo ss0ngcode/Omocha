@@ -9,7 +9,7 @@ public abstract class ImageException extends OmochaException {
 		super(errorCode, message);
 	}
 
-	public ImageException(ErrorCode errorCode, String message, Exception cause) {
+	public ImageException(ErrorCode errorCode, String message, Throwable cause) {
 		super(errorCode, message, cause);
 	}
 }

@@ -9,7 +9,7 @@ public abstract class BidException extends OmochaException {
 		super(errorCode, message);
 	}
 
-	public BidException(ErrorCode errorCode, String message, Exception cause) {
+	public BidException(ErrorCode errorCode, String message, Throwable cause) {
 		super(errorCode, message, cause);
 	}
 }

@@ -9,7 +9,7 @@ public abstract class NotificationException extends OmochaException {
 		super(errorCode, message);
 	}
 
-	public NotificationException(ErrorCode errorCode, String message, Exception cause) {
+	public NotificationException(ErrorCode errorCode, String message, Throwable cause) {
 		super(errorCode, message, cause);
 	}
 }

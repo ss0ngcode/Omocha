@@ -38,7 +38,6 @@ public class ConcludeProcessorImpl implements ConcludeProcessor {
 		backoff = @Backoff(delay = 200)
 	)
 	public ConcludeInfo.ConcludeResult processConclusion(Long expiredAuctionId) {
-
 		Auction auction = auctionReader.getAuction(expiredAuctionId);
 
 		Optional<Bid> optionalHighestBid = bidReader.findHighestBid(expiredAuctionId);

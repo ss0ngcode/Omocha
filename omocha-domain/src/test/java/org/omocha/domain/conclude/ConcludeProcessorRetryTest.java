@@ -1,8 +1,11 @@
 package org.omocha.domain.conclude;
 
+import static java.util.concurrent.TimeUnit.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.awaitility.Awaitility.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.given;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -98,10 +101,14 @@ public class ConcludeProcessorRetryTest {
 		concludeProcessor.processConclusion(AUCTION_ID);
 
 		// then
-		then(auctionReader).should(times(1)).getAuction(AUCTION_ID);
-		then(bidReader).should(times(1)).findHighestBid(AUCTION_ID);
-		then(concludeStore).should(times(1)).concludeAuctionWithBid(auction, highestBid);
-		then(concludeStore).should(never()).concludeAuctionWithNoBids(any());
+		await()
+			.atMost(5, SECONDS)
+			.untilAsserted(() -> {
+				then(auctionReader).should(times(1)).getAuction(AUCTION_ID);
+				then(bidReader).should(times(1)).findHighestBid(AUCTION_ID);
+				then(concludeStore).should(times(1)).concludeAuctionWithBid(auction, highestBid);
+				then(concludeStore).should(never()).concludeAuctionWithNoBids(any());
+			});
 	}
 
 	@Test
@@ -118,10 +125,14 @@ public class ConcludeProcessorRetryTest {
 		concludeProcessor.processConclusion(AUCTION_ID);
 
 		// then
-		then(auctionReader).should(times(2)).getAuction(AUCTION_ID);
-		then(bidReader).should(times(1)).findHighestBid(AUCTION_ID);
-		then(concludeStore).should(times(1)).concludeAuctionWithBid(auction, highestBid);
-		then(concludeStore).should(never()).concludeAuctionWithNoBids(any());
+		await()
+			.atMost(5, SECONDS)
+			.untilAsserted(() -> {
+				then(auctionReader).should(times(2)).getAuction(AUCTION_ID);
+				then(bidReader).should(times(1)).findHighestBid(AUCTION_ID);
+				then(concludeStore).should(times(1)).concludeAuctionWithBid(auction, highestBid);
+				then(concludeStore).should(never()).concludeAuctionWithNoBids(any());
+			});
 	}
 
 	@Test
@@ -137,10 +148,15 @@ public class ConcludeProcessorRetryTest {
 			.doesNotThrowAnyException();
 
 		// then
-		then(auctionReader).should(times(3)).getAuction(AUCTION_ID);
-		then(bidReader).should(never()).findHighestBid(anyLong());
-		then(concludeStore).should(never()).concludeAuctionWithBid(any(), any());
-		then(concludeStore).should(never()).concludeAuctionWithNoBids(any());
+		// Awaitility로 최대 5초 기다리면서 조건을 polling
+		await()
+			.atMost(5, SECONDS)
+			.untilAsserted(() -> {
+				then(auctionReader).should(times(3)).getAuction(AUCTION_ID);
+				then(bidReader).shouldHaveNoInteractions();
+				then(concludeStore).shouldHaveNoInteractions();
+			});
+
 		assertThat(output).contains("낙찰 처리를 최종 실패했습니다. auctionId: 1");
 	}
 }

@@ -69,6 +69,8 @@ public enum ErrorCode {
 
 	// Conclude Code
 	CONCLUDE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 경매에는 낙찰 내역이 존재하지 않습니다."),
+	CONCLUDE_ASYNC(HttpStatus.NOT_FOUND, "비동기 낙찰 처리중 오류가 발생했습니다."),
+	CONCLUDE_RETRY(HttpStatus.NOT_FOUND, "낙찰 재시도 횟수를 초과하였습니다."),
 
 	// Chat Code
 	CHATROOM_ACCESS_FAIL(HttpStatus.FORBIDDEN, "채팅방에 접근 거부되었습니다"),

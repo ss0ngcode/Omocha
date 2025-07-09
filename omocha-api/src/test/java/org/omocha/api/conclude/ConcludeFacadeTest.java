@@ -47,11 +47,11 @@ class ConcludeFacadeTest {
 	private static final int MEMBER_COUNT = 10000;
 	private static final int AUCTION_COUNT = 200000;
 	private static final int BIDS_PER_AUCTION = 5;
+	private static final int TIME_OUT_SECONDS = 60;
 
 	private static final int CONCLUDED_COUNT = (int)(AUCTION_COUNT * 0.7);  // 70%는 이미 종료된 경매
 	private static final int NO_BIDS_COUNT = (int)(AUCTION_COUNT * 0.15); // 15%는 유찰된 경매
-	private static final int ONGOING_BIDDING_COUNT = (int)(AUCTION_COUNT * 0.05); // 5%는 아직 진행중인 경매
-	// private static final int TARGET_BIDDING_COUNT = AUCTION_COUNT - CONCLUDED_COUNT - NO_BIDS_COUNT - ONGOING_BIDDING_COUNT; // 10%가 실제 낙찰 대상
+	private static final int ONGOING_BIDDING_COUNT = (int)(AUCTION_COUNT * 0.05); // 5%는 아직 진행중인 경매, 10%가 실제 낙찰 대상
 
 	@BeforeEach
 	void setupLargeData() {
@@ -206,7 +206,8 @@ class ConcludeFacadeTest {
 		double totalTimeSeconds = testStopWatch.getTotalTimeSeconds();
 		System.out.println(">>> 최종 실행 시간: " + totalTimeSeconds + "초");
 
-		assertTrue(totalTimeSeconds < 60, "낙찰 로직이 1분 제한 시간(" + 60 + "초)을 초과했습니다. 총 " + totalTimeSeconds + "초 소요.");
+		assertTrue(totalTimeSeconds < TIME_OUT_SECONDS, "낙찰 로직이 1분 제한 시간("
+			+ TIME_OUT_SECONDS + "초)을 초과했습니다. 총 " + totalTimeSeconds + "초 소요.");
 	}
 
 	@RepeatedTest(3)
@@ -224,8 +225,8 @@ class ConcludeFacadeTest {
 		System.out.println(">>> " + repetitionInfo.getCurrentRepetition() + "번째 최종 실행 시간: " + totalTimeSeconds + "초");
 		System.out.println("========================================\n");
 
-		assertTrue(totalTimeSeconds < 60,
-			"[" + repetitionInfo.getCurrentRepetition() + "번째 실행] 낙찰 로직이 1분 제한 시간(" + 60 + "초)을 초과했습니다. 총 "
-				+ totalTimeSeconds + "초 소요.");
+		assertTrue(totalTimeSeconds < TIME_OUT_SECONDS,
+			"[" + repetitionInfo.getCurrentRepetition() + "번째 실행] 낙찰 로직이 1분 제한 시간("
+				+ TIME_OUT_SECONDS + "초)을 초과했습니다. 총 " + totalTimeSeconds + "초 소요.");
 	}
 }

@@ -6,6 +6,10 @@ import org.omocha.domain.auction.Auction;
 import org.omocha.domain.auction.AuctionReader;
 import org.omocha.domain.bid.Bid;
 import org.omocha.domain.bid.BidReader;
+import org.omocha.domain.conclude.exception.ConcludeAlreadyProcessedException;
+import org.omocha.domain.conclude.exception.ConcludeAuctionUpdateException;
+import org.omocha.domain.conclude.exception.ConcludeChatRoomCreateException;
+import org.omocha.domain.conclude.exception.ConcludeInfoSaveException;
 import org.omocha.domain.member.Member;
 import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
@@ -32,13 +36,22 @@ public class ConcludeProcessorImpl implements ConcludeProcessor {
 	@Retryable(
 		retryFor = {
 			DataAccessResourceFailureException.class,
-			CannotGetJdbcConnectionException.class
+			CannotGetJdbcConnectionException.class,
+			ConcludeAuctionUpdateException.class,
+			ConcludeInfoSaveException.class,
+			ConcludeChatRoomCreateException.class
 		},
 		maxAttempts = 3,
 		backoff = @Backoff(delay = 200)
 	)
 	public ConcludeInfo.ConcludeResult processConclusion(Long expiredAuctionId) {
 		Auction auction = auctionReader.getAuction(expiredAuctionId);
+
+		// 다른 트랜잭션이 먼저 처리했는지 확인
+		if (auction.getAuctionStatus() == Auction.AuctionStatus.CONCLUDED
+			|| auction.getAuctionStatus() == Auction.AuctionStatus.NO_BIDS) {
+			throw new ConcludeAlreadyProcessedException(expiredAuctionId);
+		}
 
 		Optional<Bid> optionalHighestBid = bidReader.findHighestBid(expiredAuctionId);
 
@@ -49,10 +62,7 @@ public class ConcludeProcessorImpl implements ConcludeProcessor {
 	private ConcludeInfo.ConcludeResult handleSuccessfulConclusion(Auction auction, Bid highestBid) {
 		Member buyer = highestBid.getBuyer();
 
-		concludeStore.concludeAuctionWithBid(
-			auction,
-			highestBid
-		);
+		concludeStore.concludeAuctionWithBid(auction, highestBid);
 
 		return ConcludeInfo.ConcludeResult.toInfo(auction.getAuctionId(), buyer.getMemberId());
 	}
@@ -69,7 +79,7 @@ public class ConcludeProcessorImpl implements ConcludeProcessor {
 		Exception e,
 		Long expiredAuctionId
 	) {
-		// 추후 낙찰 처리 실패에 대한 알림 추가
+		// TODO: 추후 낙찰 처리 실패에 대한 알림 추가
 		log.error("낙찰 처리를 최종 실패했습니다. auctionId: {}", expiredAuctionId, e);
 		return null;
 	}

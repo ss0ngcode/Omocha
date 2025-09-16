@@ -10,7 +10,6 @@ import static org.mockito.BDDMockito.given;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,9 +45,7 @@ public class ConcludeProcessorRetryTest {
 	@Import(DatabaseCleaner.class)                        // DatabaseCleaner 빈 등록
 	static class TestApplication {
 	}
-
-	@Autowired
-	private DatabaseCleaner databaseCleaner;
+	
 	@Autowired
 	private ConcludeProcessor concludeProcessor;
 	@MockBean
@@ -82,12 +79,6 @@ public class ConcludeProcessorRetryTest {
 			.buyer(buyer)
 			.bidPrice(new Price(2000))
 			.build();
-	}
-
-	// 테스트 후 데이터베이스 초기화
-	@AfterEach
-	void tearDown() {
-		databaseCleaner.execute();
 	}
 
 	@Test

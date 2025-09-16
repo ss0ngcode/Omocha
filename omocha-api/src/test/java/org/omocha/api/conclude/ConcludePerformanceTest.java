@@ -35,7 +35,7 @@ import org.springframework.util.StopWatch;
 	"logging.level.p6spy=OFF",
 	"spring.jpa.show-sql=false"
 })
-class ConcludeFacadeTest {
+class ConcludePerformanceTest {
 
 	@Autowired
 	private DatabaseCleaner databaseCleaner;
@@ -109,9 +109,9 @@ class ConcludeFacadeTest {
 		// Auction 데이터 생성
 		setupStopWatch.start("Auction " + AUCTION_COUNT + "건 삽입");
 		String auctionSql =
-			"INSERT INTO auction (member_id, title, content, start_price, now_price, bid_count, bid_unit, like_count, auction_status, start_date, end_date, category_id, created_at, updated_at) "
+			"INSERT INTO auction (member_id, title, content, start_price, now_price, bid_count, bid_unit, like_count, auction_status, start_date, end_date, category_id, created_at, updated_at, version) "
 				+
-				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+				"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		jdbcTemplate.batchUpdate(auctionSql, new BatchPreparedStatementSetter() {
 
@@ -129,6 +129,7 @@ class ConcludeFacadeTest {
 				ps.setLong(12, categoryId);
 				ps.setObject(13, LocalDateTime.now());
 				ps.setObject(14, LocalDateTime.now());
+				ps.setObject(15, 0);
 
 				// === 상태 및 종료 시간 분기 로직 ===
 				String status;
@@ -173,7 +174,6 @@ class ConcludeFacadeTest {
 		setupStopWatch.stop();
 
 		// Bid 데이터 생성
-		// 입찰 건수가 (AUCTION_COUNT * BIDS_PER_AUCTION) 보다 적어짐
 		setupStopWatch.start("Bid " + (auctionIdsForBidding.size() * BIDS_PER_AUCTION) + "건 삽입");
 		String bidSql = "INSERT INTO bid (auction_id, buyer_member_id, bid_price, created_at, updated_at) VALUES (?, ?, ?, ?, ?)";
 		List<Object[]> bidArgs = new ArrayList<>();
@@ -192,6 +192,11 @@ class ConcludeFacadeTest {
 		System.out.println("✓ 데이터 준비 완료!");
 		System.out.println(setupStopWatch.prettyPrint());
 	}
+
+	// @AfterEach
+	// void tearDown() {
+	// 	databaseCleaner.execute();
+	// }
 
 	@Test
 	@DisplayName("대량 데이터 기반 낙찰 로직 성능 단일 테스트 (1분 제한)")

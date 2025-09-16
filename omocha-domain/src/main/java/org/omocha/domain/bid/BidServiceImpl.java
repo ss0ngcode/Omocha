@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.omocha.domain.auction.Auction;
 import org.omocha.domain.auction.AuctionReader;
+import org.omocha.domain.auction.AuctionStore;
 import org.omocha.domain.auction.vo.Price;
 import org.omocha.domain.bid.validate.BidValidator;
 import org.omocha.domain.chat.ChatCommand;
@@ -14,7 +15,6 @@ import org.omocha.domain.common.annotation.DistributedLock;
 import org.omocha.domain.conclude.ConcludeStore;
 import org.omocha.domain.member.Member;
 import org.omocha.domain.member.MemberReader;
-import org.omocha.domain.notification.NotificationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,13 +29,13 @@ import lombok.extern.slf4j.Slf4j;
 public class BidServiceImpl implements BidService {
 
 	private final AuctionReader auctionReader;
+	private final AuctionStore auctionStore;
 	private final BidReader bidReader;
 	private final BidStore bidStore;
 	private final BidValidator bidValidator;
 	private final MemberReader memberReader;
 	private final ConcludeStore concludeStore;
 	private final ChatService chatService;
-	private final NotificationService notificationService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -84,14 +84,17 @@ public class BidServiceImpl implements BidService {
 		auction.validateAuctionStatus();
 		bidValidator.instantBuyValidate(auction, buyerMemberId);
 
+		// 경매 상태를 먼저 변경하고 saveAndFlush로 UPDATE 쿼리를 즉시 실행하여 락을 검사
+		auction.statusConcluded();
+		auctionStore.storeAndFlush(auction);
+
+		// UPDATE가 성공한 후에 다른 테이블의 데이터를 저장 (데드락 방지)
 		Member buyer = memberReader.getMember(buyerMemberId);
 		Bid bid = bidStore.store(auction, buyer, auction.getInstantBuyPrice());
 		concludeStore.store(auction, bid);
 
 		var chatRoomCommand = new ChatCommand.AddChatRoom(auction.getAuctionId(), buyerMemberId);
 		chatService.addChatRoom(chatRoomCommand);
-
-		auction.statusConcluded();
 	}
 
 	@Override

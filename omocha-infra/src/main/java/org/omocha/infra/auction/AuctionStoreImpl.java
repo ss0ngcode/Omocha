@@ -26,6 +26,11 @@ public class AuctionStoreImpl implements AuctionStore {
 	}
 
 	@Override
+	public Auction storeAndFlush(Auction auction) {
+		return auctionRepository.saveAndFlush(auction);
+	}
+
+	@Override
 	public void removeAuction(Auction auction) {
 		auctionRepository.delete(auction);
 		// imageProvider.deleteFile(auction.getThumbnailPath());
